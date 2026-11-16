@@ -1,0 +1,55 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Товары</h2>
+        <a href="{{ route('admin.products.create') }}" class="btn btn-sm btn-success"><i class="bi bi-plus-lg me-1"></i> Создать товар</a>
+    </div>
+
+    @if(session('status'))
+        <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Цена</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($items as $it)
+                <tr>
+                    <td>{{ $it->id }}</td>
+                    <td class="align-middle">
+                        <div class="d-flex align-items-center">
+                            @if(!empty($it->image_link))
+                                <img src="{{ $it->image_link }}" alt="thumb" class="product-thumb me-3" data-bs-toggle="tooltip" title="Предпросмотр">
+                            @endif
+                            <div>
+                                <div class="fw-semibold">{{ $it->name ?? $it->title ?? '—' }}</div>
+                                <div class="text-muted-small">{{ $it->model ?? '' }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="align-middle">{{ $it->price ? number_format($it->price,2,'.','') . ' р' : '—' }}</td>
+                    <td>
+                        <a href="{{ route('admin.products.show', $it->id) }}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Просмотр"><i class="bi bi-eye"></i></a>
+                        <a href="{{ route('admin.products.edit', $it->id) }}" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" title="Редактировать"><i class="bi bi-pencil"></i></a>
+                        <form action="{{ route('admin.products.destroy', $it->id) }}" method="POST" class="d-inline js-delete-form" data-item-name="{{ $it->name }}">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Удалить">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div class="mt-3">{{ $items->links() }}</div>
+</div>
+@endsection

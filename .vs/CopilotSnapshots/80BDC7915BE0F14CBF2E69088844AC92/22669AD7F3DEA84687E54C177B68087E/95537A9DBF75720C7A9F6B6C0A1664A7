@@ -1,0 +1,95 @@
+﻿<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Cart;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Products;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+class OrderController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    // Страница оформления — преобразуем корзину в заказ
+    public function checkout(Request $request)
+    {
+        // Оформление без дополнительных форм — используем данные пользователя
+        // Если требуется, можно дополнительно брать адрес/телефон из профиля
+        $user = Auth::user();
+        $items = Cart::with('product')->where('user_id', $user->id)->get();
+        if ($items->isEmpty()) {
+            return redirect()->back()->with('error', 'Корзина пуста');
+        }
+
+        DB::beginTransaction();
+        try {
+            $total = 0;
+            foreach ($items as $it) {
+                $price = $it->product ? $it->product->price : 0;
+                $total += $price * $it->quantity;
+            }
+
+            // create order using existing schema fields (total_price, queue optional)
+            $order = Order::create([
+                'user_id' => $user->id,
+                'total_price' => $total,
+                'status' => 'new',
+                // fill contact info from user profile when available
+                'name' => $user->name ?? ($user->login ?? null),
+                'phone' => $user->phone ?? null,
+                'address' => $user->address ?? null,
+            ]);
+
+            foreach ($items as $it) {
+                $price = $it->product ? $it->product->price : 0;
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $it->product_id,
+                    'quantity' => $it->quantity,
+                    'price' => $price,
+                ]);
+            }
+
+            // Очистим корзину
+            Cart::where('user_id', $user->id)->delete();
+
+            DB::commit();
+            return redirect()->route('orders.show', ['id' => $order->id])->with('success', 'Заказ создан');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Логируем подробности и показываем краткую ошибку в сессии для отладки
+            Log::error('Order checkout error: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->back()->with('error', 'Ошибка при оформлении заказа: ' . $e->getMessage());
+        }
+    }
+
+    public function show($id)
+    {
+        $user = Auth::user();
+        $order = Order::with('items.product')->where('id', $id)->where('user_id', $user->id)->firstOrFail();
+        return view('orders.show', compact('order'));
+    }
+
+    // Эмуляция оплаты: пометить заказ как 'paid'
+    public function pay(Request $request, $id)
+    {
+        $user = Auth::user();
+        $order = Order::where('id', $id)->where('user_id', $user->id)->firstOrFail();
+        if ($order->status === 'paid') {
+            return redirect()->back()->with('info', 'Заказ уже оплачен');
+        }
+
+        $order->status = 'paid';
+        $order->save();
+
+        return redirect()->back()->with('success', 'Оплата успешно эмулирована');
+    }
+}

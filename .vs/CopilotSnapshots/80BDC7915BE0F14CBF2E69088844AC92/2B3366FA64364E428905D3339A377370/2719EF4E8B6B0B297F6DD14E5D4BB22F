@@ -1,0 +1,25 @@
+﻿<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+// Дополнительная проверка на случай обхода middleware
+
+class admincontroller extends Controller
+{
+    public function admin()
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+
+        if ((isset($user->role) && $user->role === 'admin') || (isset($user->is_admin) && $user->is_admin)) {
+            return view('admin');
+        }
+
+        abort(403);
+    }
+}

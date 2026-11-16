@@ -1,0 +1,54 @@
+﻿<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+use App\Models\products;
+
+class katalogController extends Controller
+{
+    public function Katalog(Request $request)
+    {
+
+        $sort = $request->get('sort', '');
+        $selectedCategory = $request->get('category', 0);
+
+        // Базовый запрос товаров
+        $query = products::query();
+
+        // Применить сортировку
+        if ($sort === 'price') {
+            $query->orderBy('price', 'asc');
+        } elseif ($sort === 'name') {
+            $query->orderBy('name', 'asc');
+        } elseif ($sort === 'novelty') {
+            if (Schema::hasColumn('products', 'created_at')) {
+                $query->orderBy('created_at', 'desc');
+            }
+        } elseif ($sort === 'year') {
+            if (Schema::hasColumn('products', 'year')) {
+                $query->orderBy('year', 'desc');
+            }
+        }
+
+        // Здесь можно добавить фильтрацию по категории, если в таблице products есть соответствующее поле
+        // например: if ($selectedCategory && Schema::hasColumn('products','kategory_id')) { $query->where('kategory_id',$selectedCategory); }
+
+        $inproducts = $query->get();
+
+        // Загрузка категорий из таблицы kategory
+        $categories = DB::table('kategory')->select('kategory_id', 'kategory_name')->get();
+
+        return view('katalog', compact('inproducts', 'categories', 'sort', 'selectedCategory'));
+    }
+
+    public function show(Products $product)
+    {
+        $product = Products::find($primarykey);
+
+        return view('tovar', compact('product'));
+    }
+}

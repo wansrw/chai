@@ -1,0 +1,55 @@
+﻿@extends('layouts.app')
+
+@section('content')
+
+<style>
+
+</style>
+<div class="content me-auto container">
+<button
+        class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filters" aria-expanded="false"> Фильтры </button>
+    <div
+        class="collapse mt-2"
+        id="filters">
+        <div
+            class="card card-body"
+            style="max-width: 300px;">
+
+            <label class="form-label"> Категория </label>
+            <select class="form-select mb-3" name="category">
+                <option value="0">Все категории</option>
+                @if(isset($categories) && count($categories))
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->kategory_id }}">{{ $cat->kategory_name }}</option>
+                    @endforeach
+                @endif
+            </select>
+            <label class="form-label">
+                Сортировка
+            </label>
+            <select class="form-select">
+                <option>По новизне</option>
+                <option>По году производства</option>
+                <option>По названию</option>
+                <option>По цене</option>
+            </select>
+        </div>
+    </div>
+  <div class= "d-flex flex-nowrap">
+
+    @foreach($inproducts as $item)
+    <div class="card m-5" style="width: 18rem;">
+    <img src="{{asset($item->image_link)}}" class="card-img-top" alt="...">
+    <div class="card-body">
+    <h5 class="card-title">{{$item->name}}</h5>
+    <p class="card-text">{{$item->price}} 🪙</p>
+    <a href="{{ route('Tovar', $item->id) }} " class="btn btn-primary">Go somewhere</a>
+    </div>
+    </div>
+    @endforeach
+  </div>
+</div>
+
+
+@endsection
+

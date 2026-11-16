@@ -1,0 +1,43 @@
+﻿<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Order;
+
+class OrderController extends Controller
+{
+    public function index()
+    {
+        $orders = Order::with('items.product')->orderBy('id','desc')->paginate(25);
+        return view('admin.orders.index', compact('orders'));
+    }
+
+    public function show($id)
+    {
+        $order = Order::with('items.product')->findOrFail($id);
+        return view('admin.orders.show', compact('order'));
+    }
+
+    public function changeStatus(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $status = $request->input('status');
+        $order->status = $status;
+        $order->save();
+        return redirect()->route('admin.orders.show', $id)->with('status', 'Статус обновлён');
+    }
+
+    // массовая смена статусов
+    public function bulkStatus(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        $status = $request->input('status');
+        if (!is_array($ids) || empty($ids) || !$status) {
+            return redirect()->route('admin.orders.index')->with('status', 'Ничего не выбрано');
+        }
+        Order::whereIn('id', $ids)->update(['status' => $status]);
+        return redirect()->route('admin.orders.index')->with('status', 'Статусы обновлены');
+    }
+}

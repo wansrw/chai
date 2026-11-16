@@ -1,0 +1,48 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container py-4">
+    <h1 class="mb-3">Админ‑панель</h1>
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Товары</h5>
+                    <p class="card-text small text-muted">Просмотр, добавление, редактирование и удаление товаров.</p>
+                    <a href="{{ route('Katalog') }}" class="btn btn-sm btn-primary">Перейти к товарам</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Заказы</h5>
+                    <p class="card-text small text-muted">Список заказов, фильтр по статусу, просмотр деталей и смена статуса.</p>
+                    <a href="{{ url('/orders') }}" class="btn btn-sm btn-primary">Смотреть заказы</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Пользователи</h5>
+                    <p class="card-text small text-muted">Управление пользователями и ролями.</p>
+                    <a href="{{ url('/admin/users') }}" class="btn btn-sm btn-primary">Список пользователей</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <div class="card">
+            <div class="card-body">
+                <h6>Информация</h6>
+                <p class="mb-0">Добро пожаловать, <strong>{{ Auth::user()->name ?? Auth::user()->login }}</strong>. Используйте боковые ссылки для навигации по разделам админки.</p>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

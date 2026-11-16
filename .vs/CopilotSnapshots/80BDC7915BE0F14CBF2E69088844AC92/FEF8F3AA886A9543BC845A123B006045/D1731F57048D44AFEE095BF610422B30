@@ -1,0 +1,46 @@
+﻿
+@extends('layouts.app')
+
+@section('content')
+
+<div class="content me-auto container">
+<section class="container py-5" id="contacts">
+    <h1 class="text-center mb-5">gde?</h1>
+
+    <div class="row g-4 align-items-stretch">
+        <div class="col-lg-7">
+            <div class="ratio ratio-16x9">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=..."
+                    style="border:0;"
+                    allowfullscreen=""
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+        <div class="col-lg-5" >
+            <div class="card h-100 shadow-sm">
+                <div class="card-body p-4">
+
+                    <h3 class="mb-4">kontakti</h3>
+
+                    <div class="mb-4">
+                        <h5>adres</h5>
+                        <p class="text-muted">xgfddfgdfgdfgdfg</p>
+                    </div>
+                    <div class="mb-4">
+                        <h5>telephon</h5>
+                        <p><a href="tel:+79999999999">+79999999999</a></p>
+                    </div><div>
+                        <h5>Email</h5>
+                        <p ><a href="mailto:hjkhjkhjk@gmail.com">hjkjkhjkhjkhjkhjkhjk@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</div>
+
+@endsection

@@ -1,0 +1,80 @@
+﻿<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/test', function () {
+    return view('Tovar');
+});
+
+Route::get('/', [App\Http\Controllers\onasController::class, 'onas'])->name('onas');
+
+Route::get('/katalog', [App\Http\Controllers\katalogController::class, 'Katalog'])->name('Katalog');
+
+Route::get('/tovar/{id}', [App\Http\Controllers\tovarController::class, 'Tovar'])->name('Tovar');
+
+Route::get('/gde', [App\Http\Controllers\gdecontroler::class, 'gde'])->name('gde');
+
+Route::get('/admin', [App\Http\Controllers\admincontroller::class, 'admin'])
+    ->name('admin')
+    ->middleware(['auth','role:admin']);
+
+// Admin resource routes
+Route::group(['prefix' => 'admin', 'middleware' => ['auth','role:admin'], 'as' => 'admin.'], function () {
+    Route::get('/', [App\Http\Controllers\admincontroller::class, 'admin'])->name('index');
+
+    Route::get('/products', [App\Http\Controllers\Admin\ProductController::class, 'index'])->name('products.index');
+    Route::get('/products/{id}', [App\Http\Controllers\Admin\ProductController::class, 'show'])->name('products.show');
+    Route::get('/products/create', [App\Http\Controllers\Admin\ProductController::class, 'create'])->name('products.create');
+    Route::post('/products', [App\Http\Controllers\Admin\ProductController::class, 'store'])->name('products.store');
+    Route::get('/products/{id}/edit', [App\Http\Controllers\Admin\ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/products/{id}', [App\Http\Controllers\Admin\ProductController::class, 'update'])->name('products.update');
+    Route::delete('/products/{id}', [App\Http\Controllers\Admin\ProductController::class, 'destroy'])->name('products.destroy');
+
+    Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/status', [App\Http\Controllers\Admin\OrderController::class, 'changeStatus'])->name('orders.status');
+
+    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
+    Route::delete('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
+
+    Route::get('/categories', [App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/create', [App\Http\Controllers\Admin\CategoryController::class, 'create'])->name('categories.create');
+    Route::post('/categories', [App\Http\Controllers\Admin\CategoryController::class, 'store'])->name('categories.store');
+    Route::get('/categories/{id}/edit', [App\Http\Controllers\Admin\CategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/categories/{id}', [App\Http\Controllers\Admin\CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{id}', [App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('categories.destroy');
+
+    // User role edit
+    Route::get('/users/{id}/edit-role', [App\Http\Controllers\Admin\UserController::class, 'editRole'])->name('users.editRole');
+    Route::put('/users/{id}/role', [App\Http\Controllers\Admin\UserController::class, 'updateRole'])->name('users.updateRole');
+});
+
+// Cart routes
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/remove', [App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/clear', [App\Http\Controllers\CartController::class, 'clear'])->name('cart.clear');
+
+    // Checkout / orders
+    Route::post('/checkout', [App\Http\Controllers\OrderController::class, 'checkout'])->name('checkout');
+    Route::get('/orders/{id}', [App\Http\Controllers\OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/pay', [App\Http\Controllers\OrderController::class, 'pay'])->name('orders.pay');
+});

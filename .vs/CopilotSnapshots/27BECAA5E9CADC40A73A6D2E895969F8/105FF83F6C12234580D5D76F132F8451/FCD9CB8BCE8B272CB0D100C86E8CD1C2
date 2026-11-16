@@ -1,0 +1,74 @@
+﻿<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Order extends Model
+{
+    use HasFactory;
+
+    protected $table = 'orders';
+
+    protected $fillable = [
+        'user_id',
+        'total_price',
+        'status',
+        'queue',
+        'order_number',
+        'payment_method',
+        'payment_status',
+        'shipping_method',
+        'shipped_at',
+        'delivered_at',
+        'name',
+        'phone',
+        'address',
+        'notes',
+    ];
+
+    // Таблица orders в этой БД не содержит timestamps по умолчанию
+    public $timestamps = false;
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * Human friendly status label
+     */
+    public function getStatusLabelAttribute()
+    {
+        $map = [
+            1 => 'Новый',
+            2 => 'Оплачен',
+            3 => 'В обработке',
+            4 => 'Отправлен',
+            5 => 'Завершён',
+        ];
+
+        $s = $this->status;
+        // if status is numeric stored as string
+        if (is_numeric($s)) {
+            return $map[(int)$s] ?? (string)$s;
+        }
+
+        // if status stored as word
+        $wordMap = [
+            'new' => 'Новый',
+            'paid' => 'Оплачен',
+            'processing' => 'В обработке',
+            'shipped' => 'Отправлен',
+            'completed' => 'Завершён',
+        ];
+
+        return $wordMap[strtolower($s)] ?? (string)$s;
+    }
+}

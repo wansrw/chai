@@ -1,0 +1,206 @@
+﻿  
+<!doctype html>
+
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+<script src="{{ asset('js/bootstrap.bundle.js') }}" defer></script>
+<link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet">
+
+    <style>
+        /* Небольшие визуальные улучшения: тени, плавные переходы, скругления */
+        body { background-color: #fbfbfd; }
+        .navbar { box-shadow: 0 2px 8px rgba(20,20,40,0.06); }
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 6px 18px rgba(33,33,50,0.06);
+            transition: transform .18s ease, box-shadow .18s ease;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 36px rgba(33,33,50,0.09);
+        }
+        .btn {
+            transition: transform .12s ease, box-shadow .12s ease;
+        }
+        .btn:active, .btn:focus { outline: none; box-shadow: 0 6px 14px rgba(33,33,50,0.08); }
+        .btn:hover { transform: translateY(-2px); }
+        .table thead th { background: linear-gradient(90deg, #fafafa, #ffffff); }
+        .table tbody tr:hover { background: rgba(250,250,255,0.8); }
+        .card-header { background: linear-gradient(180deg,#fff,#fbfbff); font-weight:600; }
+        .badge-custom {
+            background: linear-gradient(90deg,#6c757d,#495057);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(73,80,87,0.12);
+            border-radius: 999px;
+            padding: 0.35em 0.6em;
+            font-size: .8rem;
+        }
+        /* Статусы и роли */
+        .badge-status { display:inline-block; padding: .28rem .6rem; border-radius: .375rem; color:#fff; font-weight:600; font-size:.85rem; }
+        .badge-status.new { background: linear-gradient(90deg,#0d6efd,#0b5ed7); }
+        .badge-status.paid { background: linear-gradient(90deg,#198754,#157347); }
+        .badge-status.processing { background: linear-gradient(90deg,#fd7e14,#f76707); }
+        .badge-status.shipped { background: linear-gradient(90deg,#0dcaf0,#0891b2); }
+        .badge-status.completed { background: linear-gradient(90deg,#6f42c1,#5a2ea6); }
+
+        .role-badge { display:inline-block; padding: .2rem .5rem; border-radius: .5rem; color:#fff; font-size:.8rem; font-weight:600; }
+        .role-badge.admin { background: linear-gradient(90deg,#d63384,#a61f66); }
+        .role-badge.user { background: linear-gradient(90deg,#0d6efd,#0b5ed7); }
+
+        /* Product thumb */
+        .product-thumb { width:64px; height:64px; object-fit:cover; border-radius:6px; box-shadow:0 6px 14px rgba(0,0,0,0.06); }
+
+        /* Table and dashboard accents */
+        .table-shadow { box-shadow: 0 8px 30px rgba(20,20,40,0.04); border-radius:8px; overflow:hidden; }
+        .admin-dashboard .card { border: none; }
+
+        /* small helpers */
+        .text-muted-small { color: #6c757d; font-size: .92rem; }
+        /* Слегка выделять ссылки в навбаре */
+        .navbar .navbar-brand { color: #222; }
+        .navbar .navbar-brand:hover { text-decoration: none; color: #111; }
+        /* Небольшой эффект для карточек на дашборде */
+        .admin-dashboard .card { min-height: 120px; }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Инициализация bootstrap tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+
+            // Обработка форм удаления через модальное окно
+            var deleteForms = document.querySelectorAll('.js-delete-form');
+            var confirmModal = document.getElementById('confirmDeleteModal');
+            var modalInstance = confirmModal ? new bootstrap.Modal(confirmModal) : null;
+            var modalForm = document.getElementById('confirm-delete-form');
+            var modalItemName = document.getElementById('confirm-delete-item');
+
+            deleteForms.forEach(function(f){
+                f.addEventListener('submit', function(e){
+                    e.preventDefault();
+                    var action = f.getAttribute('action');
+                    var name = f.dataset.itemName || '';
+                    if(modalForm && modalInstance){
+                        modalForm.setAttribute('action', action);
+                        if(modalItemName) modalItemName.textContent = name;
+                        modalInstance.show();
+                    } else {
+                        // fallback если модал отсутствует
+                        if(confirm('Удалить ' + name + '?')){ f.submit(); }
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- Модальное окно подтверждения удаления -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Подтвердите удаление</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+          </div>
+          <div class="modal-body">
+            Вы уверены, что хотите удалить <strong id="confirm-delete-item"></strong>?
+          </div>
+          <div class="modal-footer">
+            <form id="confirm-delete-form" method="POST">
+                @csrf
+                @method('DELETE')
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="submit" class="btn btn-danger">Удалить</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</head>
+
+<body >
+    <div id="app">
+        <nav class="navbar navbar-expand-md  shadow-sm">
+            <div class="container">
+                <img src="{{ asset('img\logo.png') }}" alt="" class="img-fluid rounded me-2" style="width:50px">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключить навигацию">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent" >
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav me-auto">
+                        <nav class="navbar ">
+                        <div class="container-fluid">
+                            <a class="navbar-brand fst-italic" href="{{ route('onas') }}">О нас</a>
+                            <a class="navbar-brand fst-italic" href="{{ route('Katalog') }}">Каталог</a>
+                            <a class="navbar-brand fst-italic" href="{{ route('gde') }}">Где купить</a>
+                            @auth
+                                <a class="navbar-brand fst-italic" href="{{ route('cart.index') }}">Корзина (@php try { echo Auth::user()->cartItems()->count(); } catch (\Exception $e) { echo 0; } @endphp)</a>
+                            @endauth
+                            {{-- Админ ссылка в левой части навбара не показываем по дизайн-замечанию --}}
+
+                        </div>
+
+                        </nav>
+                    </ul>
+
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Authentication Links -->
+                        @guest
+                            @if (Route::has('login'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                </li>
+                            @endif
+
+                            @if (Route::has('register'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                </li>
+                            @endif
+                        @else
+                            <li class="nav-item dropdown">
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    {{ Auth::user()->name }}
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('home') }}">Дом</a>
+                                    @if(method_exists(Auth::user(), 'isAdmin') ? Auth::user()->isAdmin() : (isset(Auth::user()->role) && Auth::user()->role == 2))
+                                        <a class="dropdown-item" href="{{ route('admin.index') }}">Admin</a>
+                                    @endif
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        Выйти
+                                    </a>
+                                </div>
+                            </li>
+                        @endguest
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+            @csrf
+        </form>
+
+        <main class="py-4">
+            @yield('content')
+        </main>
+    </div>
+</body>
+</html>

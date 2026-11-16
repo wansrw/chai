@@ -1,0 +1,67 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container py-4">
+    <h2>Создать товар</h2>
+
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $e)
+                    <li>{{ $e }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
+        @csrf
+        <div class="mb-3">
+            <label class="form-label">Название</label>
+            <input name="name" value="{{ old('name') }}" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Цена</label>
+            <input name="price" value="{{ old('price') }}" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Категория</label>
+            <select name="kategory" class="form-select">
+                <option value="">--</option>
+                @foreach($kats as $k)
+                    <option value="{{ $k->id }}">{{ $k->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Загрузить изображение (опционально)</label>
+            <input type="file" name="image" accept="image/*" class="form-control">
+            <div class="form-text">Или вставьте ссылку ниже</div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Ссылка на изображение</label>
+            <input id="image_link_input" name="image_link" value="{{ old('image_link') }}" class="form-control" placeholder="URL или относительный путь">
+            <div class="mt-2">
+                <img id="image_preview" src="{{ old('image_link') }}" alt="preview" class="product-thumb" style="display: {{ old('image_link') ? 'inline-block' : 'none' }}; max-width: 200px;">
+            </div>
+        </div>
+        <button class="btn btn-primary">Создать</button>
+        <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        var input = document.getElementById('image_link_input');
+        var preview = document.getElementById('image_preview');
+        if(!input) return;
+        input.addEventListener('input', function(){
+            var v = input.value.trim();
+            if(v){ preview.src = v; preview.style.display = 'inline-block'; }
+            else { preview.style.display = 'none'; }
+        });
+    });
+</script>
+@endpush

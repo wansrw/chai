@@ -1,0 +1,59 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container py-4">
+    <h2>Заказ #{{ $order->id }}</h2>
+
+    @if(session('status'))
+        <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <p>Пользователь: {{ $order->user->name ?? $order->user->login ?? '—' }}</p>
+            <p>Сумма: {{ $order->total_price ?? '—' }}</p>
+            <p>Статус: {{ $order->status_label ?? $order->status }}</p>
+        </div>
+    </div>
+
+    <h5>Позиции</h5>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Количество</th>
+                <th>Цена</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($order->items as $it)
+                <tr>
+                    <td>{{ $it->product->name ?? '—' }}</td>
+                    <td>{{ $it->quantity }}</td>
+                    <td>{{ $it->price ?? ($it->product->price ?? '—') }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <form action="{{ route('admin.orders.status', $order->id) }}" method="POST" class="row g-2 align-items-center">
+        @csrf
+        <div class="col-auto">
+            <select name="status" class="form-select form-select-sm">
+                @php
+                    $statuses = [1=>'Новый',2=>'Оплачен',3=>'В обработке',4=>'Отправлен',5=>'Завершён'];
+                    $current = is_numeric($order->status) ? (int)$order->status : $order->status;
+                @endphp
+                @foreach($statuses as $k=>$v)
+                    <option value="{{ $k }}" {{ $current==$k? 'selected' : '' }}>{{ $v }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-sm btn-primary">Обновить статус</button>
+        </div>
+    </form>
+
+    <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-secondary mt-3">Назад</a>
+</div>
+@endsection

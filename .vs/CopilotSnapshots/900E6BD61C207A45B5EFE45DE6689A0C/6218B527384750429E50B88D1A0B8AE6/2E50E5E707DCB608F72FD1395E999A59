@@ -1,0 +1,25 @@
+﻿<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Models\products;
+
+class katalogController extends Controller
+{
+    public function Katalog()
+    {
+
+        $inproducts = products::get();
+
+        return view('Katalog' , compact('inproducts'));
+    }
+
+    public function show(Products $product)
+    {
+        $product = Products::find($primarykey);
+
+        return view('tovar', compact('product'));
+    }
+}

@@ -1,0 +1,36 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container p-4">
+    <h2>Заказ #{{ $order->id }}</h2>
+
+    <p>Статус: {{ $order->status }}</p>
+    <p>Имя: {{ $order->name }}</p>
+    <p>Телефон: {{ $order->phone }}</p>
+    <p>Адрес: {{ $order->address }}</p>
+
+    <h4>Элементы</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Кол-во</th>
+                <th>Цена</th>
+                <th>Сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($order->items as $it)
+                <tr>
+                    <td>{{ $it->product ? $it->product->name : '—' }}</td>
+                    <td>{{ $it->quantity }}</td>
+                    <td>{{ number_format($it->price,2,'.','') }} р</td>
+                    <td>{{ number_format($it->price * $it->quantity,2,'.','') }} р</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <p><strong>Итого: {{ number_format($order->total,2,'.','') }} р</strong></p>
+</div>
+@endsection

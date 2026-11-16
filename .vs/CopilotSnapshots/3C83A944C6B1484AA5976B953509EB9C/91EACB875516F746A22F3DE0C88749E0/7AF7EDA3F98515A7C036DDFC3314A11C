@@ -1,0 +1,43 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container pt-4">
+    <!-- Карусель (без лишних полос и артефактов) -->
+<div id="carouselExample" class="carousel slide">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="..." class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="..." class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="..." class="d-block w-100" alt="...">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+    <section class="mt-4">
+        <div class="row align-items-center g-4">
+            <!-- Правильный класс col-md-6 -->
+            <div class="col-12 col-md-6">
+                <h1 class="display-5 fw-bold text-white">Чайная Лавка</h1>
+                <p class="lead" style="color: #e5e7eb;">Мы собираем лучшие сорта чая со всего мира, чтобы вы могли наслаждаться каждым глотком.</p>
+                <p style="color: #9ca3af;">Наш магазин — это не просто точка продаж, а место, где вы можете узнать о традициях чаепития, подобрать чай под настроение и найти идеальный подарок.</p>
+                <a href="{{ route('catalog') }}" class="btn btn-lg mt-3 px-4 text-white" style="background-color: #2e7d32; border-color: #2e7d32;">Перейти в каталог</a>
+            </div>
+            <div class="col-12 col-md-6 text-center">
+                <img src="https://picsum.photos/600/400?random=4" class="img-fluid rounded-4 shadow" style="border: 1px solid #374151;" alt="О магазине">
+            </div>
+        </div>
+    </section>
+</div>
+@endsection

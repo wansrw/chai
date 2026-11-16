@@ -1,0 +1,82 @@
+﻿<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Cart;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Products;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class OrderController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    // Страница оформления — преобразуем корзину в заказ
+    public function checkout(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:50',
+            'address' => 'required|string',
+        ]);
+
+        $user = Auth::user();
+        $items = Cart::with('product')->where('user_id', $user->id)->get();
+        if ($items->isEmpty()) {
+            return redirect()->back()->with('error', 'Корзина пуста');
+        }
+
+        DB::beginTransaction();
+        try {
+            $total = 0;
+            foreach ($items as $it) {
+                $price = $it->product ? $it->product->price : 0;
+                $total += $price * $it->quantity;
+            }
+
+            $order = Order::create([
+                'user_id' => $user->id,
+                'total' => $total,
+                'status' => 'new',
+                'name' => $request->input('name'),
+                'phone' => $request->input('phone'),
+                'address' => $request->input('address'),
+            ]);
+
+            foreach ($items as $it) {
+                $price = $it->product ? $it->product->price : 0;
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $it->product_id,
+                    'quantity' => $it->quantity,
+                    'price' => $price,
+                ]);
+            }
+
+            // Очистим корзину
+            Cart::where('user_id', $user->id)->delete();
+
+            DB::commit();
+            // Для начала — эмуляция оплаты: пометим как paid
+            // Можно реализовать отдельный flow; пока оставим статус new
+
+            return redirect()->route('orders.show', ['id' => $order->id])->with('success', 'Заказ создан');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Ошибка при создании заказа');
+        }
+    }
+
+    public function show($id)
+    {
+        $user = Auth::user();
+        $order = Order::with('items.product')->where('id', $id)->where('user_id', $user->id)->firstOrFail();
+        return view('orders.show', compact('order'));
+    }
+}

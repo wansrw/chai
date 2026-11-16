@@ -1,0 +1,58 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container py-4">
+    <h1 class="mb-3">Админ‑панель</h1>
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Товары</h5>
+                    <p class="card-text small text-muted">Просмотр и удаление товаров.</p>
+                    <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Заказы</h5>
+                    <p class="card-text small text-muted">Список заказов и управление статусами.</p>
+                    <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Пользователи</h5>
+                    <p class="card-text small text-muted">Управление пользователями.</p>
+                    <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Категории</h5>
+                    <p class="card-text small text-muted">Управление категориями.</p>
+                    <a href="{{ route('admin.categories.index') }}" class="btn btn-sm btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <div class="card">
+            <div class="card-body">
+                <h6>Информация</h6>
+                <p class="mb-0">Добро пожаловать, <strong>{{ Auth::user()->name ?? Auth::user()->login }}</strong>. Используйте верхние ссылки для перехода в разделы админки.</p>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

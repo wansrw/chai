@@ -1,0 +1,49 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container py-4">
+    <h2>Пользователи</h2>
+
+    @if(session('status'))
+        <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Логин</th>
+                <th>Роль</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($users as $u)
+                <tr>
+                    <td>{{ $u->id }}</td>
+                    <td>{{ $u->name ?? '—' }}</td>
+                    <td>{{ $u->login ?? $u->email ?? '—' }}</td>
+                    <td>
+                        @php
+                            $roleClass = (strtolower($u->role_name ?? $u->role) == 'администратор' || strtolower($u->role_name ?? $u->role) == 'admin') ? 'admin' : 'user';
+                        @endphp
+                        <span class="role-badge {{ $roleClass }}">{{ $u->role_name ?? $u->role }}</span>
+                    </td>
+                    <td>
+                        <a href="{{ route('admin.users.show', $u->id) }}" class="btn btn-sm btn-outline-primary">Просмотр</a>
+                        <a href="{{ route('admin.users.editRole', $u->id) }}" class="btn btn-sm btn-outline-secondary">Редактировать роль</a>
+                        <form action="{{ route('admin.users.destroy', $u->id) }}" method="POST" class="d-inline js-delete-form" data-item-name="{{ $u->name ?? $u->login }}">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Удалить">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    {{ $users->links() }}
+</div>
+@endsection

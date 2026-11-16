@@ -1,0 +1,42 @@
+﻿<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class CheckRole
+{
+    /**
+     * Handle an incoming request.
+     * Expect role parameter: 'admin'
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  string  $role
+     * @return mixed
+     */
+    public function handle(Request $request, Closure $next, $role)
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            return redirect()->route('login');
+        }
+
+        // Используем метод isAdmin в модели User для проверки
+        if ($role === 'admin') {
+            if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
+                return $next($request);
+            }
+        } else {
+            // Поддержка проверки по id/name: если передан id
+            if (isset($user->role) && (string)$user->role === (string)$role) {
+                return $next($request);
+            }
+        }
+
+        abort(403);
+    }
+}

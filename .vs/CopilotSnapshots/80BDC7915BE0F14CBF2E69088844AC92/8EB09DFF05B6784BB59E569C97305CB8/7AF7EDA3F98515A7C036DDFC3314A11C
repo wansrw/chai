@@ -1,0 +1,43 @@
+﻿@extends('layouts.app')
+
+@section('content')
+
+<div class="container text-center">
+  <div class="row justify-content-start">
+    <div class="col-4 offset-1" style="border: 1px solid #ff0000">
+      Я продал свлю попу в приёмную комиссю в ПТУ 4
+    </div>
+    <div class="col-3 offset-1 border border-primary" >
+      меня избили в школе за ленивый метод сидения на парте 3
+    </div>
+    <div class="col-2 offset-1" style="border: 1px solid #ff0000">
+      меня продали в рабство наглому шаурмисту 2
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-4" style="border: 1px solid #ff0000">
+      меня сбила машина в конун нового года и я влюбился в медсестру теперь у меня развод и двое детей 4
+    </div>
+    <div class="col-4" style="border: 1px solid #ff0000">
+      меня полюбили в школе за шоколад 4
+    </div>
+    <div class="col-4" style="border: 1px solid #ff0000">
+      любить детей не плохо 4
+    </div>
+  </div>
+  <div class="row justify-content-around">
+    <div class="col-5" style="border: 1px solid #f30000">
+      меня утащил в лес олень под кайфом 5
+    </div>
+  </div>
+  <div class="row justify-content-between">
+    <div class="col-3" style="border: 1px solid #ff0000">
+      Сколько раз в меня кинули маринованные огурцы 3
+    </div>
+    <div class="col-3 offset-6" style="border: 1px solid #ff0000">
+      меня позвали играть в ГТА 6 но с модом на реализм 3
+    </div>
+  </div>
+</div>
+
+@endsection

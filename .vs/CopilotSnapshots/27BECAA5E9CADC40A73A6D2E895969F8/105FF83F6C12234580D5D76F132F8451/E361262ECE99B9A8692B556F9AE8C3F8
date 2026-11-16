@@ -1,0 +1,62 @@
+﻿@extends('layouts.app')
+
+<div class="container py-4">
+    <h2>Создать заказ</h2>
+
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $e)
+                    <li>{{ $e }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('admin.orders.store') }}">
+        @csrf
+        <div class="mb-3">
+            <label class="form-label">Пользователь</label>
+            <select name="user_id" class="form-select">
+                <option value="">(Гость)</option>
+                @foreach($users as $u)
+                    <option value="{{ $u->id }}">#{{ $u->id }} - {{ $u->name }} ({{ $u->email }})</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Имя</label>
+            <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Телефон</label>
+            <input type="text" name="phone" class="form-control" value="{{ old('phone') }}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Адрес</label>
+            <textarea name="address" class="form-control">{{ old('address') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Сумма</label>
+            <input type="text" name="total_price" class="form-control" value="{{ old('total_price', '0.00') }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Статус</label>
+            <input type="text" name="status" class="form-control" value="{{ old('status', 'new') }}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Примечания</label>
+            <textarea name="notes" class="form-control">{{ old('notes') }}</textarea>
+        </div>
+
+        <button class="btn btn-primary">Создать</button>
+        <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+@endsection

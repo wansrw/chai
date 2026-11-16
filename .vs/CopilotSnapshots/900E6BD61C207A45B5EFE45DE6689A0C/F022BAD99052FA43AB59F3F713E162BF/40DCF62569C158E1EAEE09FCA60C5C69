@@ -1,0 +1,89 @@
+﻿  
+<!doctype html>
+
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+<script src="{{ asset('js/bootstrap.bundle.js') }}" defer></script>
+<link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet">
+
+</head>
+
+<body >
+    <div id="app">
+        <nav class="navbar navbar-expand-md  shadow-sm">
+            <div class="container">
+                <img src="{{ asset('img\logo.png') }}" alt="" class = "fluid-img card " style="width: 50px">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent" >
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav me-auto">
+                        <nav class="navbar ">
+                        <div class="container-fluid">
+                            <a class="navbar-brand fst-italic" href="{{ route('home') }}">Дом</a>
+                            <a class="navbar-brand fst-italic" href="{{ route('onas') }}">{{ __('onas') }}</a>
+                            <a class="navbar-brand fst-italic" href="{{ route('Katalog') }}">{{ __('katalog') }}</a>
+                            <a class="navbar-brand fst-italic" href="{{ route('gde') }}">{{ __('gde') }}</a>
+                            <a class="navbar-brand fst-italic" href="{{ route('admin') }}">{{ __('admin') }}</a>
+
+                            @auth
+                                <li class="nav-item dropdown">
+                                    <a id="navbarDropdownLeft" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                        {{ Auth::user()->name }}
+                                    </a>
+
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownLeft">
+                                        <a class="dropdown-item" href="{{ route('logout') }}"
+                                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            Выйти
+                                        </a>
+                                    </div>
+                                </li>
+                            @endauth
+
+                        </div>
+
+                        </nav>
+                    </ul>
+
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Authentication Links -->
+                        @guest
+                            @if (Route::has('login'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                </li>
+                            @endif
+
+                            @if (Route::has('register'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                </li>
+                            @endif
+                        @endguest
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+            @csrf
+        </form>
+
+        <main class="py-4">
+            @yield('content')
+        </main>
+    </div>
+</body>
+</html>

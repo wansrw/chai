@@ -1,0 +1,56 @@
+﻿@extends('layouts.app')
+
+@section('content')
+
+<style>
+
+</style>
+<div class="content me-auto container">
+<button
+        class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filters" aria-expanded="false"> Фильтры </button>
+    <div
+        class="collapse mt-2"
+        id="filters">
+        <div
+            class="card card-body"
+            style="max-width: 300px;">
+
+            <form method="get" action="{{ route('Katalog') }}">
+                <label class="form-label"> Категория </label>
+                <select class="form-select mb-3" name="category" onchange="this.form.submit()">
+                    <option value="0" @if(!(isset($selectedCategory) && $selectedCategory)) selected @endif>Все категории</option>
+                    @if(isset($categories) && count($categories))
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" @if(isset($selectedCategory) && $selectedCategory == $cat->id) selected @endif>{{ $cat->name }}</option>
+                        @endforeach
+                    @endif
+                </select>
+                <label class="form-label">Сортировка</label>
+                <select class="form-select" name="sort" onchange="this.form.submit()">
+                    <option value="novelty" @if(isset($sort) && $sort=='novelty') selected @endif>По новизне</option>
+                    <option value="year" @if(isset($sort) && $sort=='year') selected @endif>По году производства</option>
+                    <option value="name" @if(isset($sort) && $sort=='name') selected @endif>По названию</option>
+                    <option value="price" @if(isset($sort) && $sort=='price') selected @endif>По цене</option>
+                </select>
+                <noscript><button type="submit" class="btn btn-primary mt-2">Применить</button></noscript>
+            </form>
+        </div>
+    </div>
+  <div class= "d-flex flex-nowrap">
+
+    @foreach($inproducts as $item)
+    <div class="card m-5" style="width: 18rem;">
+    <img src="{{asset($item->image_link)}}" class="card-img-top" alt="...">
+    <div class="card-body">
+    <h5 class="card-title">{{$item->name}}</h5>
+    <p class="card-text">{{$item->price}} 🪙</p>
+    <a href="{{ route('Tovar', $item->id) }} " class="btn btn-primary">Go somewhere</a>
+    </div>
+    </div>
+    @endforeach
+  </div>
+</div>
+
+
+@endsection
+

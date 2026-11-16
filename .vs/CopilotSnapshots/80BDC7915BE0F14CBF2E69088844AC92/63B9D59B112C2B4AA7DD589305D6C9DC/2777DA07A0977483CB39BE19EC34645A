@@ -1,0 +1,23 @@
+﻿<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Kategory;
+
+class CategoryController extends Controller
+{
+    public function index()
+    {
+        $cats = Kategory::orderBy('id','desc')->paginate(25);
+        return view('admin.categories.index', compact('cats'));
+    }
+
+    public function destroy($id)
+    {
+        $cat = Kategory::find($id);
+        if ($cat) $cat->delete();
+        return redirect()->route('admin.categories.index')->with('status', 'Категория удалена');
+    }
+}

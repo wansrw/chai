@@ -1,0 +1,92 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">Профиль</div>
+                <div class="card-body">
+                    <p><strong>Имя:</strong> {{ Auth::user()->name ?? '-' }}</p>
+                    <p><strong>Логин:</strong> {{ Auth::user()->login ?? Auth::user()->email ?? '-' }}</p>
+                    <p><strong>Email:</strong> {{ Auth::user()->email ?? '-' }}</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Мои заказы</div>
+                <div class="card-body">
+                    @if(isset($orders) && $orders->isNotEmpty())
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Дата</th>
+                                    <th>Статус</th>
+                                    <th>Сумма</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($orders as $order)
+                                    <tr>
+                                        <td>{{ $order->id }}</td>
+                                        <td>{{ $order->created_at ? $order->created_at->format('Y-m-d H:i') : '-' }}</td>
+                                        <td>
+                                            @php
+                                                $s = $order->status;
+                                                if (is_numeric($s)) {
+                                                    $map = [1 => 'Новый', 2 => 'Оплачен', 3 => 'В обработке'];
+                                                    echo $map[(int)$s] ?? $s;
+                                                } else {
+                                                    echo ucfirst($s);
+                                                }
+                                            @endphp
+                                        </td>
+                                        <td>
+                                            @php
+                                                // Показываем total_price если есть, иначе считаем по элементам
+                                                $displayTotal = 0;
+                                                if (isset($order->total_price) && $order->total_price) {
+                                                    $displayTotal = $order->total_price;
+                                                } else {
+                                                    foreach ($order->items as $oi) {
+                                                        $p = isset($oi->price) && $oi->price !== null ? $oi->price : ($oi->product->price ?? 0);
+                                                        $displayTotal += $p * $oi->quantity;
+                                                    }
+                                                }
+                                                echo number_format($displayTotal,2,'.','') . ' р';
+                                            @endphp
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('orders.show', ['id' => $order->id]) }}" class="btn btn-sm btn-primary">Просмотр</a>
+                                            @if($order->status !== 'paid')
+                                                <form method="POST" action="{{ route('orders.pay', ['id' => $order->id]) }}" style="display:inline">
+                                                    @csrf
+                                                    <button class="btn btn-sm btn-success">Оплатить</button>
+                                                </form>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <p>У вас ещё нет заказов.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Навигация</div>
+                <div class="card-body">
+                    <a href="{{ route('cart.index') }}" class="btn btn-outline-primary w-100 mb-2">Моя корзина</a>
+                    <a href="{{ route('Katalog') }}" class="btn btn-outline-secondary w-100">Каталог</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

@@ -1,0 +1,93 @@
+﻿  
+<!doctype html>
+
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+<script src="{{ asset('js/bootstrap.bundle.js') }}" defer></script>
+<link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet">
+
+</head>
+
+<body >
+    <div id="app">
+        <nav class="navbar navbar-expand-md  shadow-sm">
+            <div class="container">
+                <img src="{{ asset('img\logo.png') }}" alt="" class="img-fluid rounded me-2" style="width:50px">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent" >
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav me-auto">
+                        <nav class="navbar ">
+                        <div class="container-fluid">
+                            <a class="navbar-brand fst-italic" href="{{ route('onas') }}">{{ __('onas') }}</a>
+                            <a class="navbar-brand fst-italic" href="{{ route('Katalog') }}">{{ __('katalog') }}</a>
+                            <a class="navbar-brand fst-italic" href="{{ route('gde') }}">{{ __('gde') }}</a>
+                            @auth
+                                <a class="navbar-brand fst-italic" href="{{ route('cart.index') }}">Корзина (@php try { echo Auth::user()->cartItems()->count(); } catch (\Exception $e) { echo 0; } @endphp)</a>
+                            @endauth
+                            {{-- Админ ссылка в левой части навбара не показываем по дизайн-замечанию --}}
+
+                        </div>
+
+                        </nav>
+                    </ul>
+
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Authentication Links -->
+                        @guest
+                            @if (Route::has('login'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                </li>
+                            @endif
+
+                            @if (Route::has('register'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                </li>
+                            @endif
+                        @else
+                            <li class="nav-item dropdown">
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    {{ Auth::user()->name }}
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('home') }}">Дом</a>
+                                    @if(method_exists(Auth::user(), 'isAdmin') ? Auth::user()->isAdmin() : (isset(Auth::user()->role) && Auth::user()->role == 2))
+                                        <a class="dropdown-item" href="{{ route('admin') }}">Admin</a>
+                                    @endif
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        Выйти
+                                    </a>
+                                </div>
+                            </li>
+                        @endguest
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+            @csrf
+        </form>
+
+        <main class="py-4">
+            @yield('content')
+        </main>
+    </div>
+</body>
+</html>

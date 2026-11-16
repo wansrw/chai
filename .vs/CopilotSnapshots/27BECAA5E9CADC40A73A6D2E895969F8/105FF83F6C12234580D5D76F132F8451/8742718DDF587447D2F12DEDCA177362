@@ -1,0 +1,67 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container p-4">
+    <h2>Заказ #{{ $order->id }}</h2>
+
+    <p>Статус: 
+        @php
+            $status = $order->status;
+            if (is_numeric($status)) {
+                // маппинг: 1=Новый, 2=Оплачен, 3=В обработке
+                $map = [1 => 'Новый', 2 => 'Оплачен', 3 => 'В обработке'];
+                echo $map[(int)$status] ?? $status;
+            } else {
+                echo ucfirst($status);
+            }
+        @endphp
+    </p>
+    <p>Имя: {{ $order->name }}</p>
+    <p>Телефон: {{ $order->phone }}</p>
+    <p>Адрес: {{ $order->address }}</p>
+
+    <h4>Элементы</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Кол-во</th>
+                <th>Цена</th>
+                <th>Сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($order->items as $it)
+                @php
+                    // цена может храниться в order_item (price) или братья из products
+                    $itemPrice = null;
+                    if (isset($it->price) && $it->price !== null) {
+                        $itemPrice = $it->price;
+                    } elseif ($it->product && isset($it->product->price)) {
+                        $itemPrice = $it->product->price;
+                    } else {
+                        $itemPrice = 0;
+                    }
+                    $itemSum = $itemPrice * $it->quantity;
+                @endphp
+                <tr>
+                    <td>{{ $it->product ? $it->product->name : '—' }}</td>
+                    <td>{{ $it->quantity }}</td>
+                    <td>{{ number_format($itemPrice,2,'.','') }} р</td>
+                    <td>{{ number_format($itemSum,2,'.','') }} р</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <p><strong>Итого: {{ number_format($order->total_price ?? 0,2,'.','') }} р</strong></p>
+    @if($order->status !== 'paid')
+        <form method="POST" action="{{ route('orders.pay', ['id' => $order->id]) }}">
+            @csrf
+            <button class="btn btn-primary">Оплатить (эмуляция)</button>
+        </form>
+    @else
+        <div class="alert alert-success">Заказ оплачен</div>
+    @endif
+</div>
+@endsection

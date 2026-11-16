@@ -1,0 +1,78 @@
+﻿<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Cart;
+use App\Models\Products;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class CartController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    // Показать корзину
+    public function index()
+    {
+        $user = Auth::user();
+        $items = Cart::with('product')->where('user_id', $user->id)->get();
+        return view('cart.index', compact('items'));
+    }
+
+    // Добавить товар в корзину
+    public function add(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|integer|exists:products,id',
+            'quantity' => 'nullable|integer|min:1',
+        ]);
+
+        $user = Auth::user();
+        $productId = $request->input('product_id');
+        $quantity = $request->input('quantity', 1);
+
+        $item = Cart::where('user_id', $user->id)->where('product_id', $productId)->first();
+        if ($item) {
+            $item->quantity += $quantity;
+            $item->save();
+        } else {
+            // Поскольку таблица может не иметь автоинкрементного id, используем insert
+            Cart::create([
+                'user_id' => $user->id,
+                'product_id' => $productId,
+                'quantity' => $quantity,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Товар добавлен в корзину');
+    }
+
+    // Удалить элемент из корзины
+    public function remove(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|integer',
+        ]);
+
+        $user = Auth::user();
+        $productId = $request->input('product_id');
+
+        $deleted = Cart::where('user_id', $user->id)->where('product_id', $productId)->delete();
+        if ($deleted) {
+            return redirect()->back()->with('success', 'Элемент удалён');
+        }
+
+        return redirect()->back()->with('error', 'Элемент не найден');
+    }
+
+    // Очистить корзину
+    public function clear()
+    {
+        $user = Auth::user();
+        Cart::where('user_id', $user->id)->delete();
+        return redirect()->back()->with('success', 'Корзина очищена');
+    }
+}

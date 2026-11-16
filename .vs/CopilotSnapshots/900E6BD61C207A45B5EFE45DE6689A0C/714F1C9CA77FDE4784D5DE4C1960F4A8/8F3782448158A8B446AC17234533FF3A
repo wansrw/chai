@@ -1,0 +1,29 @@
+﻿<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+use App\Models\products;
+
+class katalogController extends Controller
+{
+    public function Katalog()
+    {
+
+        $inproducts = products::get();
+
+        // Загрузка категорий из таблицы kategory
+        $categories = DB::table('kategory')->select('kategory_id', 'kategory_name')->get();
+
+        return view('katalog', compact('inproducts', 'categories'));
+    }
+
+    public function show(Products $product)
+    {
+        $product = Products::find($primarykey);
+
+        return view('tovar', compact('product'));
+    }
+}

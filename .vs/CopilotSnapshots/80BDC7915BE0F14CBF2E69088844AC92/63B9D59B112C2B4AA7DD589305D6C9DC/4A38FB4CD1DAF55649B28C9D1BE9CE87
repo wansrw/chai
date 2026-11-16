@@ -1,0 +1,57 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container py-4">
+    <h2>Заказ #{{ $order->id }}</h2>
+
+    @if(session('status'))
+        <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <p>Пользователь: {{ $order->user->name ?? $order->user->login ?? '—' }}</p>
+            <p>Сумма: {{ $order->total_price ?? '—' }}</p>
+            <p>Статус: {{ $order->status }}</p>
+        </div>
+    </div>
+
+    <h5>Позиции</h5>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Количество</th>
+                <th>Цена</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($order->items as $it)
+                <tr>
+                    <td>{{ $it->product->name ?? '—' }}</td>
+                    <td>{{ $it->quantity }}</td>
+                    <td>{{ $it->price ?? ($it->product->price ?? '—') }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <form action="{{ route('admin.orders.status', $order->id) }}" method="POST" class="row g-2 align-items-center">
+        @csrf
+        <div class="col-auto">
+            <select name="status" class="form-select form-select-sm">
+                <option value="1" {{ $order->status==1? 'selected' : '' }}>Новый</option>
+                <option value="2" {{ $order->status==2? 'selected' : '' }}>Оплачен</option>
+                <option value="3" {{ $order->status==3? 'selected' : '' }}>В обработке</option>
+                <option value="4" {{ $order->status==4? 'selected' : '' }}>Отправлен</option>
+                <option value="5" {{ $order->status==5? 'selected' : '' }}>Завершён</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-sm btn-primary">Обновить статус</button>
+        </div>
+    </form>
+
+    <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-secondary mt-3">Назад</a>
+</div>
+@endsection

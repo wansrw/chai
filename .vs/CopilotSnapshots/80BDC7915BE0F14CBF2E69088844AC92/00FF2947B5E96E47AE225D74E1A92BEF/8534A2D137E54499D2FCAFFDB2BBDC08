@@ -1,0 +1,59 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<style>
+/* Ограничение размера изображений в карусели */
+.carousel-inner img {
+    max-height: 400px;
+    width: auto;
+    object-fit: contain;
+}
+</style>
+
+<div class="content me-auto container">
+    <section class="text-center  py-5">
+    <img
+        src="public\img\logo.png" alt="WWWWWW" class="img-fluid mb-4 " style="width: 250px;"
+    >
+    <h2>WWWWWWWWWWWWWWWWWWWW</h2>
+    <p class="lead  fw-semibold" >
+       С другой стороны высокотехнологичная концепция общественной системы требует от нас анализа прогресса профессионального общества. Следует отметить, что понимание сущности ресурсосберегающих технологий требует анализа укрепления демократической системы. Для современного мира новая модель организационной деятельности обеспечивает актуальность существующий финансовых и административных условий. Не вызывает сомнений, что высокотехнологичная концепция общественной системы требует определения и уточнения прогресса профессионального общества. Значимость этих проблем настолько очевидна, что выбранный нами инновационный путь обеспечивает актуальность укрепления демократической системы. С другой стороны социально-экономическое развитие в значительной степени обуславливает создание системы обучения кадров, соответствующей насущным потребностям. Таким образом дальнейшее развитие различных форм деятельности требует анализа системы массового участия. Таким образом постоянное информационно-пропогандистское обеспечение нашей деятельности требует анализа экономической целесообразности принимаемых изменений. Таким образом понимание сущности ресурсосберегающих технологий позволяет выполнять важные задания по разработке поэтапного и последовательного развития общества. Задача организации, в особенности же постоянное информационно-пропогандистское обеспечение нашей деятельности играет важную роль в формировании модели развития.
+    </p>
+</section>
+    
+    <div id="carouselExampleIndicators" class="carousel slide">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" aria-label="Slide 5"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+        <img src="public\img\angel.png" class="d-block w-50 h-25 mx-auto" alt="angel">
+        </div>
+        <div class="carousel-item">
+        <img src="public\img\hb.png" class="d-block w-25 h-25 mx-auto" alt="...">
+        </div>
+        <div class="carousel-item">
+        <img src="public\img\субару.png" class="d-block w-50 h-25  mx-auto" alt="...">
+        </div>
+        <div class="carousel-item">
+        <img src="public\img\Untitled.png" class="d-block w-50 h-25  mx-auto" alt="...">
+        </div>
+        <div class="carousel-item">
+        <img src="public\img\b5a8fd4ab136f675104eaa991aa94203.jpg" class="d-block w-25 h-25  mx-auto" alt="...">
+        </div>  
+    </div>
+    <button class="carousel-control-prev " type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button >
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+    </div>
+</div>
+@endsection

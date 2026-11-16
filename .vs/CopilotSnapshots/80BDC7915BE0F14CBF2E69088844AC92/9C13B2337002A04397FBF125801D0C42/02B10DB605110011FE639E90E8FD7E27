@@ -1,0 +1,42 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Категории</h2>
+        <a href="{{ route('admin.categories.create') }}" class="btn btn-sm btn-success">Создать категорию</a>
+    </div>
+
+    @if(session('status'))
+        <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($cats as $c)
+                <tr>
+                    <td>{{ $c->id }}</td>
+                    <td>{{ $c->name ?? $c->title ?? '—' }}</td>
+                    <td>
+                        <a href="{{ route('admin.categories.edit', $c->id) }}" class="btn btn-sm btn-outline-secondary">Редактировать</a>
+                        <form action="{{ route('admin.categories.destroy', $c->id) }}" method="POST" class="d-inline js-delete-form" data-item-name="{{ $c->name }}">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Удалить">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    {{ $cats->links() }}
+</div>
+@endsection
