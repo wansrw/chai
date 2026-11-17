@@ -23,6 +23,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $orders = auth()->user()->orders()->with('items')->latest()->get();
+
+        return view('home', compact('orders'));
     }
 }

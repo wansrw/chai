@@ -26,7 +26,14 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('index') }}">Главная</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('catalog') }}">Каталог</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('contacts') }}">Контакты</a></li>
-
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('cart') }}">
+                            Корзина
+                            @if (array_sum((array) session('cart', [])) > 0)
+                                <span class="badge rounded-pill" style="background-color: #2e7d32;">{{ array_sum((array) session('cart', [])) }}</span>
+                            @endif
+                        </a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     @guest
@@ -48,6 +55,7 @@
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('home') }}">Мои заказы</a>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

@@ -21,7 +21,11 @@
                     <h4 class="fw-bold" style="color: #4ade80;">{{$i->price}} Р</h4>
                 </div>
                 <div class="card-footer pb-3" style="background-color: transparent; border-top: none;">
-                    <a href="{{ route('tovar',['id' => $i->id]) }}"><button class="btn w-100" style="color: #4ade80; border-color: #4ade80;">подробнее</button></a>
+                    <a href="{{ route('tovar',['id' => $i->id]) }}" class="btn w-100 mb-2" style="color: #4ade80; border-color: #4ade80;">Подробнее</a>
+                    <form method="POST" action="{{ route('cart.add', $i->id) }}">
+                        @csrf
+                        <button type="submit" class="btn w-100 text-white" style="background-color: #2e7d32;">В корзину</button>
+                    </form>
                 </div>
             </div>
         </div>
